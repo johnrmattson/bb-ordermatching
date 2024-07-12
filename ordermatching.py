@@ -144,21 +144,20 @@ if uploaded_client_file and uploaded_blockboard_file:
         st.write("Blockboard CPO: {:.2f}".format(blockboard_spend / match_count if match_count != 0 else 0))
         st.write("Profit Margin: {:.2f}%".format(profit_margin))
 
-    # --- Create Excel File with Multiple Tabs ---
+     # --- Create Excel File with Multiple Tabs ---
         output_excel_file = "blockboard_data.xlsx" 
 
         with pd.ExcelWriter(output_excel_file, engine='xlsxwriter') as writer:
-            # Convert and format date columns before writing
-            blockboard_df_deduped['Date'] = pd.to_datetime(blockboard_df_deduped['Date']).dt.strftime('%m/%d/%y')
-            matched_df['Date'] = pd.to_datetime(matched_df['Date']).dt.strftime('%m/%d/%y')
+        # Convert date columns to datetime objects and format *before* writing 
+            blockboard_df_deduped['Date'] = pd.to_datetime(blockboard_df_deduped['Date']).dt.date 
+            matched_df['Date'] = pd.to_datetime(matched_df['Date']).dt.date
 
             blockboard_df_deduped.to_excel(writer, sheet_name="All Orders", index=False)
             matched_df.to_excel(writer, sheet_name="Matched Orders", index=False)
 
-            # --- Format Date Columns (Optional - might not be needed anymore) ---
-            # You might not need this part anymore if the formatting is working correctly after the .dt.strftime() change
+                # --- Format Date Columns ---
             workbook = writer.book
-            date_format = workbook.add_format({'num_format': 'mm/dd/yy'})  # Short date format
+            date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'}) 
 
             worksheet1 = writer.sheets['All Orders']
             worksheet1.set_column(0, 0, 12, date_format) 
