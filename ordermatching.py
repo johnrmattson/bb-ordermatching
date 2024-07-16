@@ -137,21 +137,23 @@ if uploaded_client_file and uploaded_blockboard_file:
         if client_selection == "Crepe Erase":
             match_count, matched_df = crepe_erase_order_matching(
                 client_df, blockboard_df_deduped
-                # Create and display the chart
-                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
             )
+            # Create and display the chart
+            st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
+
         elif client_selection == "Nutrisystem":
             match_count, matched_df = nutrisystem_order_matching(
-                client_df, blockboard_df_deduped
-                # Create and display the chart
-                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
+                client_df, blockboard_df_deduped 
             )
+            # Create and display the chart
+            st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
+            
         elif client_selection == "Smileactives":
             match_count, matched_df = smileactives_order_matching(
                 client_df, blockboard_df_deduped
-                # Create and display the chart
-                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
             )
+            # Create and display the chart
+            st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
 
         # Calculations 
         revenue = cpa * match_count
