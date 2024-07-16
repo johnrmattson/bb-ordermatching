@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 
 # --- Functions ---
 def crepe_erase_order_matching(client_df, blockboard_df):
@@ -82,6 +83,25 @@ def load_and_process_data(uploaded_client_file, uploaded_blockboard_file):
 
     return client_df, blockboard_df_deduped 
 
+def create_matched_orders_chart(matched_df, date_column='Date'):
+    # Convert the date column to datetime if it's not already
+    matched_df[date_column] = pd.to_datetime(matched_df[date_column])
+
+    # Aggregate matched orders by date
+    daily_matches = matched_df[date_column].dt.date.value_counts().reset_index()
+    daily_matches.columns = [date_column, 'Matched Orders']
+
+    # Create the Altair chart
+    chart = alt.Chart(daily_matches).mark_line().encode(
+        x=alt.X(date_column, axis=alt.Axis(title='Date', labelAngle=-45)),
+        y=alt.Y('Matched Orders', axis=alt.Axis(title='Number of Matched Orders')),
+        tooltip=[date_column, 'Matched Orders']
+    ).properties(
+        title='Matched Orders by Day'
+    ).interactive()
+
+    return chart
+
 
 # --- Streamlit App ---
 st.title("Blockboard Order Matching")
@@ -117,14 +137,20 @@ if uploaded_client_file and uploaded_blockboard_file:
         if client_selection == "Crepe Erase":
             match_count, matched_df = crepe_erase_order_matching(
                 client_df, blockboard_df_deduped
+                # Create and display the chart
+                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
             )
         elif client_selection == "Nutrisystem":
             match_count, matched_df = nutrisystem_order_matching(
                 client_df, blockboard_df_deduped
+                # Create and display the chart
+                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
             )
         elif client_selection == "Smileactives":
             match_count, matched_df = smileactives_order_matching(
                 client_df, blockboard_df_deduped
+                # Create and display the chart
+                st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
             )
 
         # Calculations 
