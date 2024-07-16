@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
+import altair as alt # type: ignore
 
 # --- Functions ---
 def crepe_erase_order_matching(client_df, blockboard_df):
