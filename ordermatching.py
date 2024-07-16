@@ -84,8 +84,9 @@ def load_and_process_data(uploaded_client_file, uploaded_blockboard_file):
     return client_df, blockboard_df_deduped 
 
 def create_matched_orders_chart(matched_df, date_column='Date'):
-    # Convert the date column to datetime if it's not already
-    matched_df[date_column] = pd.to_datetime(matched_df[date_column])
+   # Convert dates and handle missing values (replace this with what you had before)
+    matched_df['Date'] = pd.to_datetime(matched_df['Date'], errors='coerce')  # Convert to datetime, invalid becomes NaT
+    matched_df.dropna(subset=['Date'], inplace=True)  # Drop rows with missing dates
 
     # Aggregate matched orders by date
     daily_matches = matched_df[date_column].dt.date.value_counts().reset_index()
@@ -147,7 +148,7 @@ if uploaded_client_file and uploaded_blockboard_file:
             )
             # Create and display the chart
             st.altair_chart(create_matched_orders_chart(matched_df), use_container_width=True)
-            
+
         elif client_selection == "Smileactives":
             match_count, matched_df = smileactives_order_matching(
                 client_df, blockboard_df_deduped
