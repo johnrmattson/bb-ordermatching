@@ -62,6 +62,8 @@ def load_and_process_data(uploaded_client_file, uploaded_blockboard_file):
     blockboard_df['Order ID'] = blockboard_df['Order ID'].astype(str).str.strip()
     blockboard_df = blockboard_df[~blockboard_df['Order ID'].str.contains("VALUE")]
     blockboard_df = blockboard_df.drop_duplicates(subset='Order ID', keep='first')
+    blockboard_df = blockboard_df[~blockboard_df['Attribution Pixel'].str.contains("landing|home", case=False, na=False)]
+
 
     for column in blockboard_df.columns:
         if column.startswith("Leads"):
@@ -144,6 +146,9 @@ if uploaded_client_file and uploaded_blockboard_file:
             st.write("Blockboard Media Spend: {:.2f}".format(blockboard_spend))
             st.write("Blockboard CPO: {:.2f}".format(blockboard_spend / match_count if match_count != 0 else 0))
             st.write("Profit Margin: {:.2f}%".format(profit_margin))
+
+            blockboard_df['Revenue'] = pd.to_numeric(blockboard_df['Revenue'], errors='coerce')
+            matched_df['Revenue'] = pd.to_numeric(matched_df['Revenue'], errors='coerce')
 
             # --- Excel Output ---
             output_excel_file = "blockboard_data.xlsx" 
